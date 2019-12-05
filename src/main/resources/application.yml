@@ -1,0 +1,61 @@
+spring:
+  application:
+    name: myspringboot
+  output:
+    ansi:
+      enabled: always
+  profiles:
+    active: dev
+
+server:
+  tomcat:
+    uri-encoding: UTF-8
+    max-connections: 500
+    min-spare-threads: 25
+    max-threads: 300
+    accept-count: 200
+  port: 8082
+
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
+logging:
+  level:
+    com.zb.mapper: debug
+
+---
+spring:
+  profiles: dev
+  datasource:
+    url: jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=utf8&autoReconnect=true&failOverReadOnly=false&useSSL=false&serverTimezone=UTC
+    username: root
+    password: xsy
+    driver-class-name: com.mysql.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    filters: stat
+    maxActive: 20
+    initialSize: 1
+    maxWait: 60000
+    minIdle: 1
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: select 'x'
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxOpenPreparedStatements: 20
+
+mybatis:
+  mapper-locations: classpath:mapping/*Mapper.xml
+  type-aliases-package: com.demo.entity
+
+#showSql
+logging:
+  level:
+    com:
+      example:
+        mapper : debug
+
