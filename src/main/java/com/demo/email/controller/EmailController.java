@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import javax.annotation.Resource;
 import javax.mail.*;
@@ -28,6 +30,9 @@ public class EmailController {
 
     @Resource
     public EmailService emailService;
+
+    @Resource
+    public TemplateEngine templateEngine;
 
     @Value("${e.account}")
     private  String account;     //登录用户名
@@ -53,7 +58,7 @@ public class EmailController {
         String emailContent = CreateEmailContent(resume, "xx", "110", "2019.12.10 14:00");
         System.out.println(emailContent);
         //todo sendEmail
-        Result result = sendmail(resume, "xinsy@ui-tech.com.cn", "2019.12.10 14:00", emailContent);
+        Result result = sendmail(resume, "xinsy@ui-tech.com.cn", MeetTime, emailContent);
         System.out.println(resume.getDetail());
         return result;
     }
@@ -154,9 +159,19 @@ public class EmailController {
 
             //MimeBodyPart可以包装文本，图片，附件
             MimeBodyPart body = new MimeBodyPart();
-            //HTML正文
-            body.setContent(emailContent.toString(), "text/html; charset=UTF-8");
+            // 添加正文（使用thymeleaf模板）
+            Context context = new Context();
+            context.setVariable("to",resume.getName());
+            context.setVariable("date",date);
+            context.setVariable("phone","138xxxxxxxxx");
+            context.setVariable("from","袁女士");
+            String content = this.templateEngine.process("mail", context);
+            body.setContent(content, "text/html; charset=UTF-8");
             mp.addBodyPart(body);
+           /* //HTML正文
+            body.setContent(emailContent.toString(), "text/html; charset=UTF-8");
+            mp.addBodyPart(body);*/
+
 
             //添加图片&附件
             body = new MimeBodyPart();

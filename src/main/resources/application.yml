@@ -6,7 +6,8 @@ spring:
       enabled: always
   profiles:
     active: dev
-
+  thymeleaf:
+      prefix: classpath:/templates/
 server:
   tomcat:
     uri-encoding: UTF-8
